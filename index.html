@@ -9,7 +9,7 @@
     input { width: 100%; padding: 12px; margin: 3px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
     button#mainBtn { background: #007bff; color: white; border: none; padding: 12px; border-radius: 6px; width: 100%; font-weight: 600; cursor: pointer; transition: 0.3s ease-in-out; }
     .post { background: #fff; border: 1px solid #eaeaea; padding: 15px; margin-top: 15px; border-radius: 8px; width: 100%; max-width: 500px; position: relative; }
-    .like-btn { cursor: pointer; border: none; background: #f8f9fa; padding: 5px 12px; border-radius: 20px; font-size: 14px; transition: 0.2s; }
+    .like-btn { cursor: pointer; border: none; background: #f8f9fa; padding: 5px 12px; border-radius: 20px; font-size: 14px; transition: 0.2s; margin-right: 5px;}
     .like-btn:hover { background: #e2e6ea; }
     .time { font-size: 11px; color: #999; float: right; }
     </style>
@@ -29,7 +29,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import {
     getFirestore, collection, addDoc, query, orderBy, onSnapshot,
-    serverTimestamp, updateDoc, doc, increment
+    serverTimestamp, updateDoc, doc, increment, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -45,12 +45,36 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+
 window.processLike = async (id) => {
     const docRef = doc(db, "requests", id);
     try {
         await updateDoc(docRef, { likes: increment(1) });
     } catch (e) { 
-        console.error("Validation Error:", e.message); 
+        console.error("Ошибка лайка:", e.message); 
+    }
+}
+
+window.deletePost = async (id) => {
+    try {
+        await deleteDoc(doc(db, "requests", id));
+    } catch (e) {
+        console.error("Ошибка удаления:", e.message);
+    }
+}
+
+// Редактирование email
+window.editEmail = async (id) => {
+    const newEmail = prompt("Введите новый email:");
+
+    if (!newEmail) return;
+
+    try {
+        await updateDoc(doc(db, "requests", id), {
+            email: newEmail
+        });
+    } catch (e) {
+        alert("Ошибка: данные не прошли проверку безопасности");
     }
 }
 
@@ -79,10 +103,18 @@ onSnapshot(q, (snapshot) => {
         const data = doc.data();
         feed.innerHTML += `
         <div class="post">
-            <span class="time">${data.timestamp.toDate().toLocaleTimeString()} || '...'</span>
+            <span class="time">${data.timestamp ? data.timestamp.toDate().toLocaleTimeString() : '...'}</span>
             <b>${data.name}</b>
             <p style="margin: 5px 0;">${data.email}</p>
-            <button class="like-btn" onclick="processLike('${doc.id}')"> 👍 ${data.likes || 0}</button>
+            <button class="like-btn" onclick="processLike('${doc.id}')">
+                👍 ${data.likes || 0}
+            </button>
+            <button class="like-btn" onclick="deletePost('${doc.id}')">
+                🗑 Удалить
+            </button>
+            <button class="like-btn" onclick="editEmail('${doc.id}')">
+                ✏ Изменить Email
+            </button>
         </div>
         `;
     });
