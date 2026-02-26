@@ -1,95 +1,232 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Облачный чат</title>
-<style>
-body {
-    font-family: "Inter", sans-serif;
-    background: #f0f2f5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    margin: 0;
-}
-.container {
-    width: 100%;
-    max-width: 500px;
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-}
-h3 { margin-top:0; }
-#usersContainer {
-    display: flex; flex-wrap: wrap; gap: 10px;
-}
-.user-avatar {
-    width: 60px; height: 60px; border-radius: 50%;
-    cursor: pointer; border: 3px solid #007bff;
-    transition: 0.2s; object-fit: cover;
-}
-.user-avatar:hover { transform: scale(1.1); border-color:#0056b3; }
-#messages {
-    max-height: 350px; overflow-y: auto; padding: 10px;
-    background: #f7f7f7; border-radius:10px; margin-bottom:10px;
-}
-.message {
-    margin-bottom:10px; padding:8px 12px; border-radius:15px;
-    max-width:75%; word-wrap: break-word;
-}
-.message.you { background:#007bff; color:white; margin-left:auto; text-align:right; }
-.message.them { background:#e4e6eb; color:#333; margin-right:auto; text-align:left; }
-textarea { width: 100%; padding:10px; border-radius:8px; border:1px solid #ccc; resize:none; }
-button { background:#007bff; color:white; border:none; padding:10px 15px; border-radius:8px; cursor:pointer; margin-top:5px; width:100%; font-weight:600; }
-button:hover { background:#0056b3; }
-.logout-btn { background:#ff4757; margin-top:5px; width:auto; }
-.logout-btn:hover { background:#d6304c; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Облачный чат — Личные сообщения</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0066ff;
+      --primary-dark: #0055d4;
+      --bg: #f0f2f5;
+      --chat-bg: #ffffff;
+      --msg-you: #0066ff;
+      --msg-them: #e5efff;
+      --text-dark: #111;
+      --text-light: #555;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      padding: 16px;
+      color: var(--text-dark);
+    }
+    .container {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto 16px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    header {
+      padding: 16px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #f8f9ff, #ffffff);
+    }
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+    }
+    h2, h3 { margin: 0; }
+    #auth-container {
+      text-align: center;
+      padding: 32px 20px;
+    }
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    button:hover { background: var(--primary-dark); }
+    .logout { background: #ff4d4f; }
+    .logout:hover { background: #d9363e; }
+
+    #users-list {
+      padding: 16px;
+    }
+    .user-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .user-item:hover {
+      background: #f0f7ff;
+    }
+    .user-info {
+      flex: 1;
+    }
+    .user-name {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    .user-email {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    #chat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+      background: #fafcff;
+    }
+    #chat-header h3 {
+      flex: 1;
+      font-size: 1.1rem;
+    }
+    #messages {
+      padding: 16px;
+      min-height: 300px;
+      max-height: 55vh;
+      overflow-y: auto;
+      background: linear-gradient(to bottom, #f9fbff, #ffffff);
+    }
+    .message {
+      margin: 8px 0;
+      padding: 10px 14px;
+      border-radius: 18px;
+      max-width: 78%;
+      word-wrap: break-word;
+      font-size: 0.97rem;
+      line-height: 1.4;
+    }
+    .message.you {
+      background: var(--msg-you);
+      color: white;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+    }
+    .message.them {
+      background: var(--msg-them);
+      color: #111;
+      margin-right: auto;
+      border-bottom-left-radius: 4px;
+    }
+    .time {
+      font-size: 0.68rem;
+      opacity: 0.7;
+      margin-top: 3px;
+      display: block;
+    }
+    #input-area {
+      display: flex;
+      padding: 12px 16px;
+      gap: 10px;
+      border-top: 1px solid #eee;
+      background: white;
+    }
+    textarea {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      resize: none;
+      font-size: 1rem;
+      min-height: 48px;
+      max-height: 120px;
+      line-height: 1.4;
+    }
+    #send-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-end;
+    }
+  </style>
 </head>
 <body>
 
-<!-- AUTH -->
-<div class="container" style="text-align:center;">
-    <button id="loginBtn">Войти через Google</button>
-    <div id="userPanel" style="display:none;">
-        <img id="userPhoto" src="" width="50" style="border-radius:50%">
-        <b id="userName"></b>
-        <button id="logoutBtn" class="logout-btn">Выйти</button>
+<div class="container" id="auth-container">
+  <button id="loginBtn">Войти через Google</button>
+  <div id="userPanel" style="display:none; margin-top:20px;">
+    <img id="userPhoto" class="avatar" src="" alt="avatar">
+    <div style="margin:12px 0;">
+      <div id="userName" style="font-weight:600; font-size:1.2rem;"></div>
+      <div id="userEmail" style="color:#555; font-size:0.9rem;"></div>
     </div>
+    <button id="logoutBtn" class="logout">Выйти</button>
+  </div>
 </div>
 
-<!-- USERS LIST -->
-<div id="userList" class="container" style="display:none;">
-    <h3>Выберите пользователя для чата</h3>
-    <div id="usersContainer"></div>
+<div class="container" id="users-list" style="display:none;">
+  <header>
+    <h2>Выберите собеседника</h2>
+  </header>
+  <div id="usersContainer"></div>
 </div>
 
-<!-- DM CHAT -->
-<div id="dmChat" class="container" style="display:none;">
-    <h3 id="chatWith"></h3>
-    <div id="messages"></div>
-    <textarea id="dmText" placeholder="Напишите сообщение..."></textarea>
-    <button id="sendDmBtn">Отправить</button>
+<div class="container" id="chat-container" style="display:none;">
+  <div id="chat-header">
+    <img id="chatAvatar" class="avatar" src="" alt="">
+    <h3 id="chatWith">Чат</h3>
+    <button onclick="closeChat()" style="background:#eee; color:#333; padding:8px 16px;">← Назад</button>
+  </div>
+  
+  <div id="messages"></div>
+  
+  <div id="input-area">
+    <textarea id="messageInput" placeholder="Напишите сообщение..."></textarea>
+    <button id="sendBtn">→</button>
+  </div>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, doc, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, doc, setDoc, addDoc, onSnapshot,
+  query, orderBy, serverTimestamp, getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Firebase config
 const firebaseConfig = {
-    apiKey: "AIzaSyA7XlW_nh-IVyKWbEQMiLxm0TzIilOYhwo",
-    authDomain: "myproject-aabca.firebaseapp.com",
-    projectId: "myproject-aabca",
-    storageBucket: "myproject-aabca.firebasestorage.app",
-    messagingSenderId: "685101721502",
-    appId: "1:685101721502:web:36ec315ecab087b45f188f",
-    measurementId: "G-S6ZRRY7MQF"
+  apiKey: "AIzaSyA7XlW_nh-IVyKWbEQMiLxm0TzIilOYhwo",
+  authDomain: "myproject-aabca.firebaseapp.com",
+  projectId: "myproject-aabca",
+  storageBucket: "myproject-aabca.firebasestorage.app",
+  messagingSenderId: "685101721502",
+  appId: "1:685101721502:web:36ec315ecab087b45f188f",
+  measurementId: "G-S6ZRRY7MQF"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -97,113 +234,170 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// DOM
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const userPanel = document.getElementById("userPanel");
-const userName = document.getElementById("userName");
-const userPhoto = document.getElementById("userPhoto");
+const loginBtn    = document.getElementById('loginBtn');
+const logoutBtn   = document.getElementById('logoutBtn');
+const userPanel   = document.getElementById('userPanel');
+const userNameEl  = document.getElementById('userName');
+const userEmailEl = document.getElementById('userEmail');
+const userPhoto   = document.getElementById('userPhoto');
 
-const usersContainer = document.getElementById("usersContainer");
-const userList = document.getElementById("userList");
+const usersList   = document.getElementById('users-list');
+const usersCont   = document.getElementById('usersContainer');
 
-const dmChat = document.getElementById("dmChat");
-const chatWith = document.getElementById("chatWith");
-const messagesDiv = document.getElementById("messages");
-const dmText = document.getElementById("dmText");
-const sendDmBtn = document.getElementById("sendDmBtn");
+const chatCont    = document.getElementById('chat-container');
+const chatAvatar  = document.getElementById('chatAvatar');
+const chatWith    = document.getElementById('chatWith');
+const messagesDiv = document.getElementById('messages');
+const msgInput    = document.getElementById('messageInput');
+const sendBtn     = document.getElementById('sendBtn');
 
 let currentChatUser = null;
+let currentChatId   = null;
+let unsubscribeMsg  = null;
 
-// AUTH
-loginBtn.onclick = ()=>signInWithPopup(auth,provider);
-logoutBtn.onclick = ()=>signOut(auth);
+// ──────────────────────────────────────────────
+loginBtn.onclick  = () => signInWithPopup(auth, provider);
+logoutBtn.onclick = () => signOut(auth);
 
-onAuthStateChanged(auth, async (user)=>{
-    if(user){
-        loginBtn.style.display="none";
-        userPanel.style.display="flex";
-        userPanel.style.alignItems="center";
-        userName.textContent = user.displayName;
-        userPhoto.src = user.photoURL;
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    loginBtn.style.display = 'none';
+    userPanel.style.display = 'block';
+    userNameEl.textContent = user.displayName || 'Пользователь';
+    userEmailEl.textContent = user.email;
+    userPhoto.src = user.photoURL || 'https://via.placeholder.com/48?text=You';
 
-        // save/update user
-        await setDoc(doc(db,"users",user.uid),{
-            uid:user.uid,
-            name:user.displayName,
-            email:user.email,
-            photo:user.photoURL
-        },{merge:true});
+    // Сохраняем/обновляем данные пользователя
+    await setDoc(doc(db, 'users', user.uid), {
+      uid: user.uid,
+      name: user.displayName,
+      email: user.email,
+      photo: user.photoURL,
+      lastActive: serverTimestamp()
+    }, { merge: true });
 
-        userList.style.display="block";
-        loadUsers();
-    } else {
-        loginBtn.style.display="block";
-        userPanel.style.display="none";
-        userList.style.display="none";
-        dmChat.style.display="none";
-    }
+    usersList.style.display = 'block';
+    loadUsers();
+  } else {
+    loginBtn.style.display = 'block';
+    userPanel.style.display = 'none';
+    usersList.style.display = 'none';
+    chatCont.style.display  = 'none';
+  }
 });
 
-// LOAD USERS
-function loadUsers(){
-    const q = collection(db,"users");
-    onSnapshot(q,snapshot=>{
-        usersContainer.innerHTML="";
-        snapshot.forEach(docSnap=>{
-            const u = docSnap.data();
-            if(u.uid===auth.currentUser.uid) return;
-            const img = document.createElement("img");
-            img.src = u.photo;
-            img.className="user-avatar";
-            img.title = u.name;
-            img.onclick = ()=>openChat(u);
-            usersContainer.appendChild(img);
-        });
+// ──────────────────────────────────────────────
+function loadUsers() {
+  onSnapshot(collection(db, 'users'), (snap) => {
+    usersCont.innerHTML = '';
+    snap.forEach(ds => {
+      const u = ds.data();
+      if (u.uid === auth.currentUser?.uid) return;
+
+      const div = document.createElement('div');
+      div.className = 'user-item';
+      div.innerHTML = `
+        <img src="${u.photo || 'https://via.placeholder.com/48'}" class="avatar" alt="">
+        <div class="user-info">
+          <div class="user-name">${u.name || 'Без имени'}</div>
+          <div class="user-email">${u.email || ''}</div>
+        </div>
+      `;
+      div.onclick = () => openChat(u);
+      usersCont.appendChild(div);
     });
+  });
 }
 
-// OPEN CHAT
-function openChat(user){
-    currentChatUser=user;
-    dmChat.style.display="block";
-    chatWith.textContent="Чат с "+user.name;
-    loadMessages();
+// ──────────────────────────────────────────────
+async function openChat(user) {
+  currentChatUser = user;
+  const uids = [auth.currentUser.uid, user.uid].sort();
+  currentChatId = uids.join('_');
+
+  // Создаём/обновляем документ чата
+  const chatRef = doc(db, 'chats', currentChatId);
+  await setDoc(chatRef, {
+    participants: uids,
+    lastMessageTime: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
+  chatAvatar.src = user.photo || 'https://via.placeholder.com/48';
+  chatWith.textContent = user.name || 'Пользователь';
+
+  usersList.style.display = 'none';
+  chatCont.style.display = 'block';
+
+  loadMessages();
 }
 
-// LOAD MESSAGES
-function loadMessages(){
-    const q = query(collection(db,"private_messages"), orderBy("timestamp","asc"));
-    onSnapshot(q,snapshot=>{
-        messagesDiv.innerHTML="";
-        snapshot.forEach(docSnap=>{
-            const m = docSnap.data();
-            if(!currentChatUser) return;
-            if(m.participants.includes(auth.currentUser.uid) && m.participants.includes(currentChatUser.uid)){
-                const div = document.createElement("div");
-                div.className="message "+(m.fromUid===auth.currentUser.uid?"you":"them");
-                div.textContent=m.text;
-                messagesDiv.appendChild(div);
-            }
-        });
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    });
+function closeChat() {
+  if (unsubscribeMsg) unsubscribeMsg();
+  chatCont.style.display = 'none';
+  usersList.style.display = 'block';
+  currentChatId = currentChatUser = null;
 }
 
-// SEND MESSAGE
-sendDmBtn.onclick=async ()=>{
-    if(!currentChatUser) return;
-    const text = dmText.value.trim();
-    if(!text) return;
-    await addDoc(collection(db,"private_messages"),{
-        fromUid: auth.currentUser.uid,
-        toUid: currentChatUser.uid,
-        text: text,
-        timestamp: serverTimestamp(),
-        participants:[auth.currentUser.uid,currentChatUser.uid]
+// ──────────────────────────────────────────────
+function loadMessages() {
+  if (unsubscribeMsg) unsubscribeMsg();
+
+  const colRef = collection(db, 'chats', currentChatId, 'messages');
+  const q = query(colRef, orderBy('timestamp', 'asc'));
+
+  unsubscribeMsg = onSnapshot(q, (snap) => {
+    messagesDiv.innerHTML = '';
+    snap.forEach(ds => {
+      const m = ds.data();
+      const isYou = m.fromUid === auth.currentUser.uid;
+
+      const div = document.createElement('div');
+      div.className = `message ${isYou ? 'you' : 'them'}`;
+      div.innerHTML = `
+        ${m.text}
+        <span class="time">
+          ${m.timestamp ? new Date(m.timestamp.toDate()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '...'}
+        </span>
+      `;
+      messagesDiv.appendChild(div);
     });
-    dmText.value="";
-};
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
+}
+
+// ──────────────────────────────────────────────
+async function sendMessage() {
+  const text = msgInput.value.trim();
+  if (!text || !currentChatId) return;
+
+  const colRef = collection(db, 'chats', currentChatId, 'messages');
+
+  await addDoc(colRef, {
+    fromUid: auth.currentUser.uid,
+    text,
+    timestamp: serverTimestamp()
+  });
+
+  // Обновляем мету чата
+  await setDoc(doc(db, 'chats', currentChatId), {
+    lastMessage: text.substring(0, 80),
+    lastMessageTime: serverTimestamp(),
+    lastFrom: auth.currentUser.uid
+  }, { merge: true });
+
+  msgInput.value = '';
+  msgInput.focus();
+}
+
+sendBtn.onclick = sendMessage;
+
+msgInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
 </script>
 </body>
 </html>
