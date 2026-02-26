@@ -1,357 +1,249 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Облачное приложение</title>
-    <style>
-        body {
-            font-family: "Inter", sans-serif;
-            background: #f4f7f6;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            margin: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Облачное приложение с личным чатом</title>
 
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            box-sizing: border-box;
-        }
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7f6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: 0;
+}
 
-        /* Стили блока авторизации */
-        .auth-bar {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+.container {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #007bff;
-            object-fit: cover;
-        }
+.post {
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
 
-        .post-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
 
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-family: "Inter", sans-serif;
-        }
+button:hover {
+    background: #0056b3;
+}
 
-        textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
+.logout-btn {
+    background: #ff4757;
+}
 
-        button {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            width: 100%;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 14px;
-        }
+textarea, input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 8px;
+    box-sizing: border-box;
+}
 
-        button:hover {
-            background: #0056b3;
-        }
-
-        button.disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .logout-btn {
-            background: #ff4757;
-            padding: 8px 15px;
-            width: auto;
-            font-size: 14px;
-            margin-left: auto;
-        }
-
-        .logout-btn:hover {
-            background: #d6304c;
-        }
-
-        .post {
-            background: #fff;
-            border: 1px solid #eaeaea;
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 500px;
-            box-sizing: border-box;
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .like-btn {
-            cursor: pointer;
-            border: none;
-            background: #f8f9fa;
-            padding: 5px 12px;
-            border-radius: 20px;
-            margin-top: 10px;
-            width: auto;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .like-btn:hover {
-            background: #e9ecef;
-        }
-
-        .time {
-            font-size: 11px;
-            color: #999;
-            margin-left: auto;
-        }
-
-        #userInfo {
-            display: none;
-            width: 100%;
-        }
-
-        #messageForm {
-            display: none;
-        }
-
-        #feed {
-            width: 100%;
-            max-width: 500px;
-        }
-    </style>
+.time {
+    font-size: 12px;
+    color: gray;
+}
+</style>
 </head>
+
 <body>
-    <!-- Блок авторизации -->
-    <div id="authSection" class="container" style="text-align: center;">
-        <button id="loginBtn">Войти через Google</button>
-        <div id="userInfo" class="auth-bar">
-            <img id="userPhoto" class="user-avatar" src="" alt="Avatar">
-            <span id="userName" style="font-weight: bold;"></span>
-            <button id="logoutBtn" class="logout-btn">Выйти</button>
-        </div>
+
+<!-- AUTH -->
+<div class="container" style="text-align:center;">
+    <button id="loginBtn">Войти через Google</button>
+
+    <div id="userPanel" style="display:none;">
+        <p><b id="userName"></b></p>
+        <button id="logoutBtn" class="logout-btn">Выйти</button>
     </div>
+</div>
 
-    <!-- Форма создания записи -->
-    <div id="messageForm" class="container">
-        <h3>Создать запись</h3>
-        <input type="text" id="name" placeholder="Имя пользователя" readonly>
-        <input type="email" id="email" placeholder="Ваш Email" readonly>
-        <textarea id="content" placeholder="Что у вас нового?"></textarea>
-        <button id="mainBtn">Опубликовать в облако</button>
-    </div>
+<!-- POSTS -->
+<div id="postSection" class="container" style="display:none;">
+    <h3>Создать пост</h3>
+    <textarea id="postText" placeholder="Введите текст..."></textarea>
+    <button id="publishBtn">Опубликовать</button>
+</div>
 
-    <!-- Лента записей -->
-    <div id="feed"></div>
+<div id="feed" class="container"></div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, updateDoc, doc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+<!-- DM -->
+<div id="dmSection" class="container" style="display:none;">
+    <h3>Личные сообщения</h3>
+    <input type="text" id="receiverUid" placeholder="UID получателя">
+    <textarea id="dmText" placeholder="Введите сообщение"></textarea>
+    <button id="sendDmBtn">Отправить</button>
+</div>
 
-        // Конфигурация Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyA7XlW_nh-IVyKWbEQMiLxm0TzIilOYhwo",
-            authDomain: "myproject-aabca.firebaseapp.com",
-            projectId: "myproject-aabca",
-            storageBucket: "myproject-aabca.firebasestorage.app",
-            messagingSenderId: "685101721502",
-            appId: "1:685101721502:web:36ec315ecab087b45f188f",
-            measurementId: "G-S6ZRRY7MQF"
-        };
+<div id="dmFeed" class="container"></div>
 
-        // Инициализация Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { 
+    getFirestore, collection, addDoc, query, orderBy, 
+    onSnapshot, updateDoc, doc, increment, serverTimestamp, where 
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { 
+    getAuth, signInWithPopup, GoogleAuthProvider, 
+    signOut, onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-        // Элементы DOM
-        const loginBtn = document.getElementById('loginBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const userInfo = document.getElementById('userInfo');
-        const messageForm = document.getElementById('messageForm');
-        const userNameSpan = document.getElementById('userName');
-        const userPhotoImg = document.getElementById('userPhoto');
-        const nameInput = document.getElementById('name');
-        const emailInput = document.getElementById('email');
-        const contentTextarea = document.getElementById('content');
-        const mainBtn = document.getElementById('mainBtn');
-        const feedDiv = document.getElementById('feed');
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT",
+};
 
-        // --- ЛОГИКА АВТОРИЗАЦИИ ---
-        loginBtn.addEventListener('click', () => signInWithPopup(auth, provider));
-        logoutBtn.addEventListener('click', () => signOut(auth));
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Пользователь авторизован
-                loginBtn.style.display = 'none';
-                userInfo.style.display = 'flex';
-                messageForm.style.display = 'block';
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const userPanel = document.getElementById("userPanel");
+const userName = document.getElementById("userName");
 
-                // Заполняем данные пользователя
-                userNameSpan.textContent = user.displayName || 'Пользователь';
-                userPhotoImg.src = user.photoURL || 'https://via.placeholder.com/40';
-                nameInput.value = user.displayName || '';
-                emailInput.value = user.email || '';
-            } else {
-                // Пользователь не авторизован
-                loginBtn.style.display = 'block';
-                userInfo.style.display = 'none';
-                messageForm.style.display = 'none';
-            }
+const postSection = document.getElementById("postSection");
+const publishBtn = document.getElementById("publishBtn");
+const postText = document.getElementById("postText");
+const feed = document.getElementById("feed");
+
+const dmSection = document.getElementById("dmSection");
+const sendDmBtn = document.getElementById("sendDmBtn");
+const receiverUid = document.getElementById("receiverUid");
+const dmText = document.getElementById("dmText");
+const dmFeed = document.getElementById("dmFeed");
+
+loginBtn.onclick = () => signInWithPopup(auth, provider);
+logoutBtn.onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        loginBtn.style.display = "none";
+        userPanel.style.display = "block";
+        postSection.style.display = "block";
+        dmSection.style.display = "block";
+        userName.textContent = user.displayName;
+
+        loadDM(user);
+    } else {
+        loginBtn.style.display = "block";
+        userPanel.style.display = "none";
+        postSection.style.display = "none";
+        dmSection.style.display = "none";
+    }
+});
+
+publishBtn.onclick = async () => {
+    const user = auth.currentUser;
+    if (!postText.value.trim()) return;
+
+    await addDoc(collection(db, "posts"), {
+        name: user.displayName,
+        uid: user.uid,
+        text: postText.value,
+        likes: 0,
+        timestamp: serverTimestamp()
+    });
+
+    postText.value = "";
+};
+
+const postQuery = query(collection(db, "posts"), orderBy("timestamp", "desc"));
+
+onSnapshot(postQuery, (snapshot) => {
+    feed.innerHTML = "<h3>Лента</h3>";
+    snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "post";
+
+        div.innerHTML = `
+            <b>${escapeHtml(data.name)}</b>
+            <p>${escapeHtml(data.text)}</p>
+            <button onclick="likePost('${docSnap.id}')">
+                ❤️ ${data.likes || 0}
+            </button>
+        `;
+
+        feed.appendChild(div);
+    });
+});
+
+window.likePost = async (id) => {
+    await updateDoc(doc(db, "posts", id), {
+        likes: increment(1)
+    });
+};
+
+sendDmBtn.onclick = async () => {
+    const user = auth.currentUser;
+    if (!receiverUid.value.trim() || !dmText.value.trim()) return;
+
+    await addDoc(collection(db, "private_messages"), {
+        fromUid: user.uid,
+        toUid: receiverUid.value,
+        fromName: user.displayName,
+        text: dmText.value,
+        timestamp: serverTimestamp(),
+        participants: [user.uid, receiverUid.value]
+    });
+
+    dmText.value = "";
+};
+
+function loadDM(user) {
+    const q = query(
+        collection(db, "private_messages"),
+        where("participants", "array-contains", user.uid),
+        orderBy("timestamp", "asc")
+    );
+
+    onSnapshot(q, (snapshot) => {
+        dmFeed.innerHTML = "<h3>Мои сообщения</h3>";
+
+        snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const div = document.createElement("div");
+            div.className = "post";
+
+            div.innerHTML = `
+                <b>${escapeHtml(data.fromName)}</b>: 
+                ${escapeHtml(data.text)}
+            `;
+
+            dmFeed.appendChild(div);
         });
+    });
+}
 
-        // --- ЛОГИКА РАБОТЫ С ДАННЫМИ ---
-        // Функция для лайков (доступна глобально)
-        window.processLike = async (id) => {
-            try {
-                await updateDoc(doc(db, "requests", id), { 
-                    likes: increment(1) 
-                });
-            } catch (error) {
-                console.error("Ошибка при добавлении лайка:", error);
-                alert("Не удалось поставить лайк. Попробуйте позже.");
-            }
-        };
-
-        // Публикация записи
-        mainBtn.addEventListener('click', async () => {
-            const content = contentTextarea.value.trim();
-            
-            if (!content) {
-                alert("Введите текст сообщения!");
-                return;
-            }
-
-            const user = auth.currentUser;
-            if (!user) {
-                alert("Необходимо авторизоваться!");
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, "requests"), {
-                    name: user.displayName || 'Аноним',
-                    email: user.email || '',
-                    photo: user.photoURL || 'https://via.placeholder.com/30',
-                    text: content,
-                    likes: 0,
-                    timestamp: serverTimestamp()
-                });
-                
-                // Очищаем поле ввода
-                contentTextarea.value = "";
-            } catch (e) {
-                console.error("Ошибка публикации:", e);
-                alert("Ошибка безопасности! Проверьте правила (Rules) в Firebase.");
-            }
-        });
-
-        // --- REAL-TIME ОБНОВЛЕНИЕ ЛЕНТЫ ---
-        const q = query(collection(db, "requests"), orderBy("timestamp", "desc"));
-        
-        onSnapshot(q, (snapshot) => {
-            feedDiv.innerHTML = "";
-            
-            if (snapshot.empty) {
-                feedDiv.innerHTML = '<div class="post" style="text-align: center; color: #999;">Пока нет записей. Будьте первым!</div>';
-                return;
-            }
-
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                const postId = doc.id;
-                
-                // Форматирование времени
-                let timeString = 'только что';
-                if (data.timestamp) {
-                    try {
-                        const date = data.timestamp.toDate();
-                        timeString = date.toLocaleTimeString('ru-RU', { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
-                        });
-                    } catch (e) {
-                        console.warn("Ошибка форматирования даты:", e);
-                    }
-                }
-
-                // Создание элемента поста
-                const postElement = document.createElement('div');
-                postElement.className = 'post';
-                postElement.innerHTML = `
-                    <div class="post-header">
-                        <img src="${data.photo || 'https://via.placeholder.com/30'}" class="post-avatar" alt="Avatar" onerror="this.src='https://via.placeholder.com/30'">
-                        <b>${escapeHtml(data.name || 'Аноним')}</b>
-                        <span class="time">${timeString}</span>
-                    </div>
-                    <p>${escapeHtml(data.text || data.email || '')}</p>
-                    <button class="like-btn" onclick="processLike('${postId}')">
-                        ❤️ ${data.likes || 0}
-                    </button>
-                `;
-                
-                feedDiv.appendChild(postElement);
-            });
-        }, (error) => {
-            console.error("Ошибка получения данных:", error);
-            feedDiv.innerHTML = '<div class="post" style="text-align: center; color: #ff4757;">Ошибка загрузки данных</div>';
-        });
-
-        // Вспомогательная функция для экранирования HTML
-        function escapeHtml(unsafe) {
-            if (!unsafe) return '';
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        // Для отладки в консоли
-        window.db = db;
-    </script>
+function escapeHtml(text) {
+    return text
+        ?.replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+</script>
 </body>
 </html>
