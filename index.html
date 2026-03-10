@@ -48,12 +48,7 @@
       color: var(--text-light);
       font-size: 0.9rem;
     }
-    
-    /* Секция статусов */
-    .status-section {
-      padding: 20px;
-    }
-    
+    .status-section { padding: 20px; }
     .my-info {
       padding: 16px;
       background: #f0f7ff;
@@ -62,14 +57,12 @@
       font-weight: 500;
       border-left: 4px solid var(--primary);
     }
-    
     .status-controls {
       display: flex;
       gap: 8px;
       margin: 20px 0;
       flex-wrap: wrap;
     }
-    
     .status-btn {
       flex: 1;
       min-width: 120px;
@@ -83,20 +76,12 @@
       color: white;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    
     .status-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
-    
-    .status-btn:active {
-      transform: translateY(0);
-    }
-    
-    .group-list {
-      margin-top: 24px;
-    }
-    
+    .status-btn:active { transform: translateY(0); }
+    .group-list { margin-top: 24px; }
     .group-title {
       font-weight: 600;
       color: var(--text-dark);
@@ -106,7 +91,6 @@
       align-items: center;
       gap: 8px;
     }
-    
     .group-title span {
       background: var(--primary);
       color: white;
@@ -114,7 +98,6 @@
       border-radius: 20px;
       font-size: 0.8rem;
     }
-    
     #groupList .user-item {
       display: flex;
       align-items: center;
@@ -126,12 +109,14 @@
       transition: 0.15s;
       border: 1px solid transparent;
     }
-    
     #groupList .user-item:hover {
       background: #f0f7ff;
       border-color: var(--primary);
     }
-    
+    #groupList .user-item.current-user {
+      background: #e8f4ff;
+      border-color: #90c8ff;
+    }
     .status-dot {
       width: 14px;
       height: 14px;
@@ -139,28 +124,10 @@
       flex-shrink: 0;
       box-shadow: 0 0 0 2px white;
     }
-    
-    .user-info {
-      flex-grow: 1;
-    }
-    
-    .user-name {
-      font-weight: 600;
-      font-size: 1rem;
-      margin-bottom: 4px;
-    }
-    
-    .user-status {
-      font-size: 0.85rem;
-      color: #666;
-    }
-    
-    .user-email {
-      font-size: 0.75rem;
-      color: #999;
-      margin-top: 2px;
-    }
-    
+    .user-info { flex-grow: 1; }
+    .user-name { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
+    .user-status { font-size: 0.85rem; color: #666; }
+    .user-email { font-size: 0.75rem; color: #999; margin-top: 2px; }
     .stats {
       margin-top: 20px;
       padding: 16px;
@@ -170,22 +137,9 @@
       justify-content: space-around;
       text-align: center;
     }
-    
-    .stat-item {
-      flex: 1;
-    }
-    
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    
-    .stat-label {
-      font-size: 0.8rem;
-      color: #666;
-    }
-    
+    .stat-item { flex: 1; }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+    .stat-label { font-size: 0.8rem; color: #666; }
     .footer {
       padding: 16px;
       text-align: center;
@@ -193,13 +147,7 @@
       color: #999;
       font-size: 0.85rem;
     }
-    
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #666;
-    }
-    
+    .loading { text-align: center; padding: 40px; color: #666; }
     .error-message {
       background: #ffebee;
       color: #c62828;
@@ -218,31 +166,24 @@
     <div class="subtitle">Отслеживание активности участников</div>
   </header>
   
-  <!-- Supabase секция статусов -->
   <div class="status-section">
-    <!-- Информация о текущем пользователе -->
     <div id="myInfo" class="my-info">Загрузка информации о пользователе...</div>
     
-    <!-- Кнопки изменения статуса -->
     <div class="status-controls">
-      <button class="status-btn" style="background: #4CAF50;" onclick="window.changeStatus('В сети', '#4CAF50')">
-        🟢 В сети
-      </button>
-      <button class="status-btn" style="background: #FF9800;" onclick="window.changeStatus('Отошёл', '#FF9800')">
-        🟡 Отошёл
-      </button>
-      <button class="status-btn" style="background: #f44336;" onclick="window.changeStatus('Занят', '#f44336')">
-        🔴 Занят
-      </button>
-      <button class="status-btn" style="background: #9e9e9e;" onclick="window.changeStatus('Не беспокоить', '#9e9e9e')">
-        ⚫ Не беспокоить
-      </button>
+      <!-- ✅ ИСПРАВЛЕНО: оба аргумента передаются в функцию -->
+      <button class="status-btn" style="background: #4CAF50;"
+        onclick="window.changeStatus('В сети', '#4CAF50')">🟢 В сети</button>
+      <button class="status-btn" style="background: #FF9800;"
+        onclick="window.changeStatus('Отошёл', '#FF9800')">🟡 Отошёл</button>
+      <button class="status-btn" style="background: #f44336;"
+        onclick="window.changeStatus('Занят', '#f44336')">🔴 Занят</button>
+      <button class="status-btn" style="background: #9e9e9e;"
+        onclick="window.changeStatus('Не беспокоить', '#9e9e9e')">⚫ Не беспокоить</button>
     </div>
     
-    <!-- Список участников группы -->
     <div class="group-list">
       <div class="group-title">
-        Участники группы 
+        Участники группы
         <span id="membersCount">0</span>
       </div>
       <div id="groupList">
@@ -250,8 +191,7 @@
       </div>
     </div>
     
-    <!-- Статистика -->
-    <div class="stats" id="stats">
+    <div class="stats">
       <div class="stat-item">
         <div class="stat-value" id="onlineCount">0</div>
         <div class="stat-label">онлайн</div>
@@ -275,14 +215,12 @@
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/module/index.js';
 
-// ========== Конфигурация Supabase ==========
 const SUPABASE_URL = 'https://amcacekhqgycrnqzgtch.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_2pt4bLheDvE-TU-9m129UQ_YyY0YxER';
 const MY_ID = 'a8e2f841-4c1c-4f85-9b37-f7876c21a395';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Элементы DOM
 const myInfoEl = document.getElementById('myInfo');
 const groupListEl = document.getElementById('groupList');
 const membersCountEl = document.getElementById('membersCount');
@@ -290,8 +228,8 @@ const onlineCountEl = document.getElementById('onlineCount');
 const awayCountEl = document.getElementById('awayCount');
 const busyCountEl = document.getElementById('busyCount');
 
-// ========== Функция изменения статуса ==========
-window.changeStatus = async (text) => {
+// ✅ ИСПРАВЛЕНО: функция принимает оба параметра (text И color)
+window.changeStatus = async (text, color) => {
   try {
     const { error } = await supabase
       .from('profiles')
@@ -303,51 +241,39 @@ window.changeStatus = async (text) => {
       .eq('id', MY_ID);
 
     if (error) {
-      alert("Ошибка при обновлении статуса!");
+      alert("Ошибка при обновлении статуса: " + error.message);
       console.error('Supabase error:', error);
     }
-    // Данные обновятся автоматически через подписку
   } catch (err) {
     console.error('Error:', err);
     alert('Произошла ошибка при изменении статуса');
   }
 };
 
-// ========== Функция обновления статистики ==========
 function updateStats(users) {
   if (!users || users.length === 0) return;
-  
-  // Обновляем счетчик участников
   membersCountEl.textContent = users.length;
-  
-  // Считаем статусы
   const online = users.filter(u => u.status === 'В сети').length;
   const away = users.filter(u => u.status === 'Отошёл').length;
   const busy = users.filter(u => u.status === 'Занят' || u.status === 'Не беспокоить').length;
-  
   onlineCountEl.textContent = online;
   awayCountEl.textContent = away;
   busyCountEl.textContent = busy;
 }
 
-// ========== Функция отображения пользователей ==========
 function displayUsers(users) {
   if (!users || users.length === 0) {
     groupListEl.innerHTML = '<div class="loading">Нет участников</div>';
     return;
   }
   
-  // Сортируем: сначала онлайн, потом по имени
   const sortedUsers = [...users].sort((a, b) => {
-    // Онлайн всегда сверху
     if (a.status === 'В сети' && b.status !== 'В сети') return -1;
     if (a.status !== 'В сети' && b.status === 'В сети') return 1;
-    // Затем по имени
     return (a.username || '').localeCompare(b.username || '');
   });
   
   groupListEl.innerHTML = sortedUsers.map(user => {
-    // Определяем эмодзи для статуса
     let statusEmoji = '⚪';
     if (user.status === 'В сети') statusEmoji = '🟢';
     else if (user.status === 'Отошёл') statusEmoji = '🟡';
@@ -362,16 +288,13 @@ function displayUsers(users) {
             ${user.username || 'Без имени'}
             ${user.id === MY_ID ? ' (вы)' : ''}
           </div>
-          <div class="user-status">
-            ${statusEmoji} ${user.status || 'Статус не задан'}
-          </div>
+          <div class="user-status">${statusEmoji} ${user.status || 'Статус не задан'}</div>
           ${user.email ? `<div class="user-email">${user.email}</div>` : ''}
         </div>
       </div>
     `;
   }).join('');
   
-  // Находим текущего пользователя
   const currentUser = users.find(u => u.id === MY_ID);
   if (currentUser) {
     myInfoEl.innerHTML = `
@@ -384,7 +307,6 @@ function displayUsers(users) {
   updateStats(users);
 }
 
-// ========== Основная функция загрузки данных ==========
 async function loadData() {
   try {
     const { data, error } = await supabase
@@ -405,52 +327,35 @@ async function loadData() {
   }
 }
 
-// ========== Настройка Realtime подписки ==========
 function setupRealtimeSubscription() {
-  const subscription = supabase
+  return supabase
     .channel('profiles_changes')
     .on(
       'postgres_changes',
-      { 
-        event: '*', 
-        schema: 'public', 
-        table: 'profiles' 
-      },
+      { event: '*', schema: 'public', table: 'profiles' },
       (payload) => {
         console.log('Change received!', payload);
-        // При любых изменениях перезагружаем данные
         loadData();
       }
     )
     .subscribe();
-
-  return subscription;
 }
 
-// ========== Инициализация ==========
 async function init() {
-  // Проверяем подключение к Supabase
   console.log('Connecting to Supabase...');
-  
-  // Загружаем начальные данные
   await loadData();
-  
-  // Настраиваем Realtime подписку
-  const subscription = setupRealtimeSubscription();
-  
-  // Обновляем каждые 3 секунды как запасной вариант
+  setupRealtimeSubscription();
   setInterval(loadData, 3000);
   
-  // Проверяем существование текущего пользователя
+  // ✅ ИСПРАВЛЕНО: используем maybeSingle() вместо single() — не выбрасывает ошибку если нет записи
   const { data: userExists } = await supabase
     .from('profiles')
     .select('id')
     .eq('id', MY_ID)
-    .single();
+    .maybeSingle();
     
   if (!userExists) {
-    console.log('Current user not found in profiles, creating...');
-    // Создаем профиль если его нет
+    console.log('Создаём профиль пользователя...');
     await supabase
       .from('profiles')
       .insert({
@@ -464,9 +369,7 @@ async function init() {
   }
 }
 
-// Запускаем приложение
 init().catch(console.error);
-
 </script>
 </body>
 </html>
