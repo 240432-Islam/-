@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Облачный чат — Личные сообщения</title>
+  <title>Монитор статусов — Supabase</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -13,9 +13,6 @@
       --primary: #0066ff;
       --primary-dark: #0055d4;
       --bg: #f0f2f5;
-      --chat-bg: #ffffff;
-      --msg-you: #0066ff;
-      --msg-them: #e5efff;
       --text-dark: #111;
       --text-light: #555;
     }
@@ -30,561 +27,445 @@
     .container {
       width: 100%;
       max-width: 520px;
-      margin: 0 auto 16px;
+      margin: 0 auto;
       background: white;
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
       overflow: hidden;
     }
     header {
-      padding: 16px;
+      padding: 20px;
       border-bottom: 1px solid #eee;
-      display: flex;
-      align-items: center;
-      gap: 12px;
       background: linear-gradient(135deg, #f8f9ff, #ffffff);
     }
-    .avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--primary);
-    }
-    h2, h3 { margin: 0; }
-    #auth-container {
-      text-align: center;
-      padding: 32px 20px;
-    }
-    button {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 10px;
+    h1 {
+      font-size: 1.5rem;
       font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
+      color: var(--text-dark);
+      margin-bottom: 4px;
     }
-    button:hover { background: var(--primary-dark); }
-    .logout { background: #ff4d4f; }
-    .logout:hover { background: #d9363e; }
-    .back-btn {
-      background: #eee;
-      color: #333;
-      padding: 8px 16px;
-      font-weight: 500;
-      border-radius: 8px;
-    }
-    .back-btn:hover { background: #ddd; }
-
-    #users-list {
-      padding: 16px;
-    }
-    .user-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.15s;
-    }
-    .user-item:hover {
-      background: #f0f7ff;
-    }
-    .user-info {
-      flex: 1;
-    }
-    .user-name {
-      font-weight: 600;
-      font-size: 1.05rem;
-    }
-    .user-email {
-      font-size: 0.85rem;
-      color: #666;
-    }
-
-    #chat-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      border-bottom: 1px solid #eee;
-      background: #fafcff;
-    }
-    #chat-header h3 {
-      flex: 1;
-      font-size: 1.1rem;
-    }
-    #messages {
-      padding: 16px;
-      min-height: 300px;
-      max-height: 55vh;
-      overflow-y: auto;
-      background: linear-gradient(to bottom, #f9fbff, #ffffff);
-    }
-    .message {
-      margin: 8px 0;
-      padding: 10px 14px;
-      border-radius: 18px;
-      max-width: 78%;
-      word-wrap: break-word;
-      font-size: 0.97rem;
-      line-height: 1.4;
-    }
-    .message.you {
-      background: var(--msg-you);
-      color: white;
-      margin-left: auto;
-      border-bottom-right-radius: 4px;
-    }
-    .message.them {
-      background: var(--msg-them);
-      color: #111;
-      margin-right: auto;
-      border-bottom-left-radius: 4px;
-    }
-    .time {
-      font-size: 0.68rem;
-      opacity: 0.7;
-      margin-top: 3px;
-      display: block;
-    }
-    #input-area {
-      display: flex;
-      padding: 12px 16px;
-      gap: 10px;
-      border-top: 1px solid #eee;
-      background: white;
-    }
-    textarea {
-      flex: 1;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      resize: none;
-      font-size: 1rem;
-      min-height: 48px;
-      max-height: 120px;
-      line-height: 1.4;
-    }
-    #send-btn {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      font-size: 1.3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      align-self: flex-end;
+    .subtitle {
+      color: var(--text-light);
+      font-size: 0.9rem;
     }
     
-    /* Стили для статусов из Supabase */
+    /* Секция статусов */
     .status-section {
-      margin-top: 16px;
+      padding: 20px;
+    }
+    
+    .my-info {
       padding: 16px;
-      border-top: 1px solid #eee;
+      background: #f0f7ff;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      font-weight: 500;
+      border-left: 4px solid var(--primary);
     }
     
     .status-controls {
       display: flex;
       gap: 8px;
-      margin-top: 12px;
+      margin: 20px 0;
       flex-wrap: wrap;
     }
     
     .status-btn {
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.9rem;
+      flex: 1;
+      min-width: 120px;
+      padding: 12px 16px;
+      border-radius: 30px;
+      font-size: 0.95rem;
       font-weight: 500;
       border: none;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: all 0.2s;
+      color: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     
     .status-btn:hover {
-      opacity: 0.8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .status-btn:active {
+      transform: translateY(0);
     }
     
     .group-list {
-      margin-top: 20px;
+      margin-top: 24px;
     }
     
     .group-title {
       font-weight: 600;
       color: var(--text-dark);
-      margin-bottom: 12px;
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .group-title span {
+      background: var(--primary);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.8rem;
     }
     
     #groupList .user-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 12px;
       background: #f8f9fa;
       margin-bottom: 8px;
+      transition: 0.15s;
+      border: 1px solid transparent;
+    }
+    
+    #groupList .user-item:hover {
+      background: #f0f7ff;
+      border-color: var(--primary);
     }
     
     .status-dot {
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
       flex-shrink: 0;
+      box-shadow: 0 0 0 2px white;
     }
     
-    #myInfo {
+    .user-info {
+      flex-grow: 1;
+    }
+    
+    .user-name {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    
+    .user-status {
+      font-size: 0.85rem;
+      color: #666;
+    }
+    
+    .user-email {
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 2px;
+    }
+    
+    .stats {
+      margin-top: 20px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+    }
+    
+    .stat-item {
+      flex: 1;
+    }
+    
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .stat-label {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    
+    .footer {
+      padding: 16px;
+      text-align: center;
+      border-top: 1px solid #eee;
+      color: #999;
+      font-size: 0.85rem;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    
+    .error-message {
+      background: #ffebee;
+      color: #c62828;
       padding: 12px;
-      background: #f0f7ff;
       border-radius: 8px;
-      margin-top: 12px;
-      font-weight: 500;
+      margin: 16px 0;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
 
-<div class="container" id="auth-container">
-  <button id="loginBtn">Войти через Google</button>
-  <div id="userPanel" style="display:none; margin-top:20px;">
-    <img id="userPhoto" class="avatar" src="" alt="avatar">
-    <div style="margin:12px 0;">
-      <div id="userName" style="font-weight:600; font-size:1.2rem;"></div>
-      <div id="userEmail" style="color:#555; font-size:0.9rem;"></div>
-    </div>
-    <button id="logoutBtn" class="logout">Выйти</button>
-  </div>
+<div class="container">
+  <header>
+    <h1>👥 Монитор статусов</h1>
+    <div class="subtitle">Отслеживание активности участников</div>
+  </header>
   
   <!-- Supabase секция статусов -->
-  <div id="supabaseSection" style="display:none;" class="status-section">
-    <div id="myInfo" class="my-info"></div>
+  <div class="status-section">
+    <!-- Информация о текущем пользователе -->
+    <div id="myInfo" class="my-info">Загрузка информации о пользователе...</div>
+    
+    <!-- Кнопки изменения статуса -->
     <div class="status-controls">
-      <button class="status-btn" style="background: #4CAF50; color: white;" onclick="window.changeStatus('В сети', '#4CAF50')">🟢 В сети</button>
-      <button class="status-btn" style="background: #FF9800; color: white;" onclick="window.changeStatus('Отошёл', '#FF9800')">🟡 Отошёл</button>
-      <button class="status-btn" style="background: #f44336; color: white;" onclick="window.changeStatus('Занят', '#f44336')">🔴 Занят</button>
-      <button class="status-btn" style="background: #9e9e9e; color: white;" onclick="window.changeStatus('Не беспокоить', '#9e9e9e')">⚫ Не беспокоить</button>
+      <button class="status-btn" style="background: #4CAF50;" onclick="window.changeStatus('В сети', '#4CAF50')">
+        🟢 В сети
+      </button>
+      <button class="status-btn" style="background: #FF9800;" onclick="window.changeStatus('Отошёл', '#FF9800')">
+        🟡 Отошёл
+      </button>
+      <button class="status-btn" style="background: #f44336;" onclick="window.changeStatus('Занят', '#f44336')">
+        🔴 Занят
+      </button>
+      <button class="status-btn" style="background: #9e9e9e;" onclick="window.changeStatus('Не беспокоить', '#9e9e9e')">
+        ⚫ Не беспокоить
+      </button>
     </div>
+    
+    <!-- Список участников группы -->
     <div class="group-list">
-      <div class="group-title">Участники группы:</div>
-      <div id="groupList"></div>
+      <div class="group-title">
+        Участники группы 
+        <span id="membersCount">0</span>
+      </div>
+      <div id="groupList">
+        <div class="loading">Загрузка участников...</div>
+      </div>
+    </div>
+    
+    <!-- Статистика -->
+    <div class="stats" id="stats">
+      <div class="stat-item">
+        <div class="stat-value" id="onlineCount">0</div>
+        <div class="stat-label">онлайн</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="awayCount">0</div>
+        <div class="stat-label">отошли</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="busyCount">0</div>
+        <div class="stat-label">заняты</div>
+      </div>
     </div>
   </div>
-</div>
-
-<div class="container" id="users-list" style="display:none;">
-  <header>
-    <h2>Выберите собеседника</h2>
-  </header>
-  <div id="usersContainer"></div>
-</div>
-
-<div class="container" id="chat-container" style="display:none;">
-  <div id="chat-header">
-    <img id="chatAvatar" class="avatar" src="" alt="">
-    <h3 id="chatWith">Чат</h3>
-    <button id="backBtn" class="back-btn">← Назад</button>
-  </div>
   
-  <div id="messages"></div>
-  
-  <div id="input-area">
-    <textarea id="messageInput" placeholder="Напишите сообщение..."></textarea>
-    <button id="sendBtn">→</button>
+  <div class="footer">
+    Обновление каждые 3 секунды • Supabase Realtime
   </div>
 </div>
 
 <script type="module">
-// Импорт Supabase
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/module/index.js';
 
-// Импорт Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore, collection, doc, setDoc, addDoc, onSnapshot,
-  query, orderBy, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import {
-  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-// ========== Supabase инициализация ==========
+// ========== Конфигурация Supabase ==========
 const SUPABASE_URL = 'https://amcacekhqgycrnqzgtch.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_2pt4bLheDvE-TU-9m129UQ_YyY0YxER';
+const MY_ID = 'a8e2f841-4c1c-4f85-9b37-f7876c21a395';
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ID пользователя (будет обновляться после Firebase авторизации)
-let MY_ID = a8e2f841-4c1c-4f85-9b37-f7876c21a395;
+// Элементы DOM
+const myInfoEl = document.getElementById('myInfo');
+const groupListEl = document.getElementById('groupList');
+const membersCountEl = document.getElementById('membersCount');
+const onlineCountEl = document.getElementById('onlineCount');
+const awayCountEl = document.getElementById('awayCount');
+const busyCountEl = document.getElementById('busyCount');
 
-// Глобальная функция для изменения статуса
+// ========== Функция изменения статуса ==========
 window.changeStatus = async (text, color) => {
-  if (!MY_ID) {
-    alert("Сначала войдите в систему");
-    return;
-  }
-  
-  const { error } = await supabase
-    .from('profiles')
-    .update({ status: text, color: color })
-    .eq('id', MY_ID);
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ 
+        status: text, 
+        color: color,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', MY_ID);
 
-  if (error) {
-    alert("Ошибка! Проверьте RLS политики в Supabase.");
-    console.error(error);
-  } else {
-    fetchGroup();
+    if (error) {
+      alert("Ошибка при обновлении статуса!");
+      console.error('Supabase error:', error);
+    }
+    // Данные обновятся автоматически через подписку
+  } catch (err) {
+    console.error('Error:', err);
+    alert('Произошла ошибка при изменении статуса');
   }
 };
 
-// Функция загрузки группы из Supabase
-async function fetchGroup() {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .order('username', { ascending: true });
+// ========== Функция обновления статистики ==========
+function updateStats(users) {
+  if (!users || users.length === 0) return;
+  
+  // Обновляем счетчик участников
+  membersCountEl.textContent = users.length;
+  
+  // Считаем статусы
+  const online = users.filter(u => u.status === 'В сети').length;
+  const away = users.filter(u => u.status === 'Отошёл').length;
+  const busy = users.filter(u => u.status === 'Занят' || u.status === 'Не беспокоить').length;
+  
+  onlineCountEl.textContent = online;
+  awayCountEl.textContent = away;
+  busyCountEl.textContent = busy;
+}
 
-  if (error) {
-    console.error(error);
+// ========== Функция отображения пользователей ==========
+function displayUsers(users) {
+  if (!users || users.length === 0) {
+    groupListEl.innerHTML = '<div class="loading">Нет участников</div>';
     return;
   }
-
-  const list = document.getElementById('groupList');
-  if (list) {
-    list.innerHTML = data.map(user => `
-      <div class="user-item">
+  
+  // Сортируем: сначала онлайн, потом по имени
+  const sortedUsers = [...users].sort((a, b) => {
+    // Онлайн всегда сверху
+    if (a.status === 'В сети' && b.status !== 'В сети') return -1;
+    if (a.status !== 'В сети' && b.status === 'В сети') return 1;
+    // Затем по имени
+    return (a.username || '').localeCompare(b.username || '');
+  });
+  
+  groupListEl.innerHTML = sortedUsers.map(user => {
+    // Определяем эмодзи для статуса
+    let statusEmoji = '⚪';
+    if (user.status === 'В сети') statusEmoji = '🟢';
+    else if (user.status === 'Отошёл') statusEmoji = '🟡';
+    else if (user.status === 'Занят') statusEmoji = '🔴';
+    else if (user.status === 'Не беспокоить') statusEmoji = '⚫';
+    
+    return `
+      <div class="user-item ${user.id === MY_ID ? 'current-user' : ''}">
         <div class="status-dot" style="background: ${user.color || '#ccc'}"></div>
-        <div style="flex-grow: 1;">
-          <strong>${user.username}</strong><br>
-          <small style="color: #666;">${user.status || 'Статус не задан'}</small>
+        <div class="user-info">
+          <div class="user-name">
+            ${user.username || 'Без имени'}
+            ${user.id === MY_ID ? ' (вы)' : ''}
+          </div>
+          <div class="user-status">
+            ${statusEmoji} ${user.status || 'Статус не задан'}
+          </div>
+          ${user.email ? `<div class="user-email">${user.email}</div>` : ''}
         </div>
       </div>
-    `).join('');
+    `;
+  }).join('');
+  
+  // Находим текущего пользователя
+  const currentUser = users.find(u => u.id === MY_ID);
+  if (currentUser) {
+    myInfoEl.innerHTML = `
+      <strong>${currentUser.username || 'Пользователь'}</strong><br>
+      Ваш статус: ${currentUser.status || 'не задан'}
+      ${currentUser.email ? `<br><small>${currentUser.email}</small>` : ''}
+    `;
   }
   
-  const me = data.find(u => u.id === MY_ID);
-  const myInfo = document.getElementById('myInfo');
-  if (me && myInfo) {
-    myInfo.innerText = `Вы зашли как: ${me.username}`;
+  updateStats(users);
+}
+
+// ========== Основная функция загрузки данных ==========
+async function loadData() {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('username', { ascending: true });
+
+    if (error) {
+      console.error('Error loading profiles:', error);
+      groupListEl.innerHTML = `<div class="error-message">Ошибка загрузки: ${error.message}</div>`;
+      return;
+    }
+
+    displayUsers(data || []);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    groupListEl.innerHTML = '<div class="error-message">Непредвиденная ошибка</div>';
   }
 }
 
-// ========== Firebase инициализация ==========
-const firebaseConfig = {
-  apiKey: "AIzaSyA7XlW_nh-IVyKWbEQMiLxm0TzIilOYhwo",
-  authDomain: "myproject-aabca.firebaseapp.com",
-  projectId: "myproject-aabca",
-  storageBucket: "myproject-aabca.firebasestorage.app",
-  messagingSenderId: "685101721502",
-  appId: "1:685101721502:web:36ec315ecab087b45f188f",
-  measurementId: "G-S6ZRRY7MQF"
-};
+// ========== Настройка Realtime подписки ==========
+function setupRealtimeSubscription() {
+  const subscription = supabase
+    .channel('profiles_changes')
+    .on(
+      'postgres_changes',
+      { 
+        event: '*', 
+        schema: 'public', 
+        table: 'profiles' 
+      },
+      (payload) => {
+        console.log('Change received!', payload);
+        // При любых изменениях перезагружаем данные
+        loadData();
+      }
+    )
+    .subscribe();
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+  return subscription;
+}
 
-// Элементы DOM
-const loginBtn     = document.getElementById('loginBtn');
-const logoutBtn    = document.getElementById('logoutBtn');
-const userPanel    = document.getElementById('userPanel');
-const userNameEl   = document.getElementById('userName');
-const userEmailEl  = document.getElementById('userEmail');
-const userPhoto    = document.getElementById('userPhoto');
-
-const usersList    = document.getElementById('users-list');
-const usersCont    = document.getElementById('usersContainer');
-
-const chatCont     = document.getElementById('chat-container');
-const chatAvatar   = document.getElementById('chatAvatar');
-const chatWith     = document.getElementById('chatWith');
-const messagesDiv  = document.getElementById('messages');
-const msgInput     = document.getElementById('messageInput');
-const sendBtn      = document.getElementById('sendBtn');
-const backBtn      = document.getElementById('backBtn');
-
-const supabaseSection = document.getElementById('supabaseSection');
-
-let currentChatUser = null;
-let currentChatId   = null;
-let unsubscribeMsg  = null;
-
-// Авторизация
-loginBtn.onclick  = () => signInWithPopup(auth, provider);
-logoutBtn.onclick = () => signOut(auth);
-
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    loginBtn.style.display = 'none';
-    userPanel.style.display = 'block';
-    userNameEl.textContent = user.displayName || 'Пользователь';
-    userEmailEl.textContent = user.email;
-    userPhoto.src = user.photoURL || 'https://via.placeholder.com/48?text=You';
-
-    await setDoc(doc(db, 'users', user.uid), {
-      uid: user.uid,
-      name: user.displayName,
-      email: user.email,
-      photo: user.photoURL,
-      lastActive: serverTimestamp()
-    }, { merge: true });
-
-    // Устанавливаем MY_ID для Supabase
-    MY_ID = user.uid;
+// ========== Инициализация ==========
+async function init() {
+  // Проверяем подключение к Supabase
+  console.log('Connecting to Supabase...');
+  
+  // Загружаем начальные данные
+  await loadData();
+  
+  // Настраиваем Realtime подписку
+  const subscription = setupRealtimeSubscription();
+  
+  // Обновляем каждые 3 секунды как запасной вариант
+  setInterval(loadData, 3000);
+  
+  // Проверяем существование текущего пользователя
+  const { data: userExists } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', MY_ID)
+    .single();
     
-    // Показываем Supabase секцию
-    supabaseSection.style.display = 'block';
-    
-    // Создаем или обновляем профиль в Supabase
-    const { error } = await supabase
+  if (!userExists) {
+    console.log('Current user not found in profiles, creating...');
+    // Создаем профиль если его нет
+    await supabase
       .from('profiles')
-      .upsert({ 
-        id: user.uid, 
-        username: user.displayName || 'Пользователь',
-        email: user.email,
+      .insert({
+        id: MY_ID,
+        username: 'Администратор',
+        email: 'admin@example.com',
         status: 'В сети',
         color: '#4CAF50'
       });
-      
-    if (error) console.error('Supabase profile error:', error);
-    
-    // Загружаем группу
-    await fetchGroup();
-    
-    // Запускаем периодическое обновление
-    setInterval(fetchGroup, 5000);
-    
-    usersList.style.display = 'block';
-    loadUsers();
-  } else {
-    loginBtn.style.display = 'block';
-    userPanel.style.display = 'none';
-    supabaseSection.style.display = 'none';
-    usersList.style.display = 'none';
-    chatCont.style.display  = 'none';
-    MY_ID = null;
+    await loadData();
   }
-});
-
-// Загрузка списка пользователей
-function loadUsers() {
-  onSnapshot(collection(db, 'users'), (snap) => {
-    usersCont.innerHTML = '';
-    snap.forEach(ds => {
-      const u = ds.data();
-      if (u.uid === auth.currentUser?.uid) return;
-
-      const div = document.createElement('div');
-      div.className = 'user-item';
-      div.innerHTML = `
-        <img src="${u.photo || 'https://via.placeholder.com/48'}" class="avatar" alt="">
-        <div class="user-info">
-          <div class="user-name">${u.name || 'Без имени'}</div>
-          <div class="user-email">${u.email || ''}</div>
-        </div>
-      `;
-      div.onclick = () => openChat(u);
-      usersCont.appendChild(div);
-    });
-  });
 }
 
-// Открытие чата
-async function openChat(user) {
-  currentChatUser = user;
-  const uids = [auth.currentUser.uid, user.uid].sort();
-  currentChatId = uids.join('_');
-
-  const chatRef = doc(db, 'chats', currentChatId);
-  await setDoc(chatRef, {
-    participants: uids,
-    lastMessageTime: serverTimestamp(),
-    updatedAt: serverTimestamp()
-  }, { merge: true });
-
-  chatAvatar.src = user.photo || 'https://via.placeholder.com/48';
-  chatWith.textContent = user.name || 'Пользователь';
-
-  usersList.style.display = 'none';
-  chatCont.style.display = 'block';
-
-  loadMessages();
-}
-
-// Закрытие чата
-function closeChat() {
-  if (unsubscribeMsg) {
-    unsubscribeMsg();
-    unsubscribeMsg = null;
-  }
-  chatCont.style.display = 'none';
-  usersList.style.display = 'block';
-  currentChatId = null;
-  currentChatUser = null;
-  messagesDiv.innerHTML = '';
-}
-
-// Загрузка сообщений
-function loadMessages() {
-  if (unsubscribeMsg) unsubscribeMsg();
-
-  const colRef = collection(db, 'chats', currentChatId, 'messages');
-  const q = query(colRef, orderBy('timestamp', 'asc'));
-
-  unsubscribeMsg = onSnapshot(q, (snap) => {
-    messagesDiv.innerHTML = '';
-    snap.forEach(ds => {
-      const m = ds.data();
-      const isYou = m.fromUid === auth.currentUser.uid;
-
-      const div = document.createElement('div');
-      div.className = `message ${isYou ? 'you' : 'them'}`;
-      div.innerHTML = `
-        ${m.text}
-        <span class="time">
-          ${m.timestamp ? new Date(m.timestamp.toDate()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '...'}
-        </span>
-      `;
-      messagesDiv.appendChild(div);
-    });
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  });
-}
-
-// Отправка сообщения
-async function sendMessage() {
-  const text = msgInput.value.trim();
-  if (!text || !currentChatId) return;
-
-  const colRef = collection(db, 'chats', currentChatId, 'messages');
-
-  await addDoc(colRef, {
-    fromUid: auth.currentUser.uid,
-    text,
-    timestamp: serverTimestamp()
-  });
-
-  await setDoc(doc(db, 'chats', currentChatId), {
-    lastMessage: text.substring(0, 80),
-    lastMessageTime: serverTimestamp(),
-    lastFrom: auth.currentUser.uid
-  }, { merge: true });
-
-  msgInput.value = '';
-  msgInput.focus();
-}
-
-sendBtn.onclick = sendMessage;
-
-msgInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-// Кнопка «Назад»
-if (backBtn) {
-  backBtn.addEventListener('click', closeChat);
-} else {
-  console.warn('Кнопка #backBtn не найдена');
-}
+// Запускаем приложение
+init().catch(console.error);
 
 </script>
 </body>
