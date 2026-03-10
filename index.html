@@ -291,7 +291,7 @@ const awayCountEl = document.getElementById('awayCount');
 const busyCountEl = document.getElementById('busyCount');
 
 // ========== Функция изменения статуса ==========
-window.changeStatus = async (text, color) => {
+window.changeStatus = async (text) => {
   try {
     const { error } = await supabase
       .from('profiles')
