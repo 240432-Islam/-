@@ -3,373 +3,592 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Монитор статусов — Supabase</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  
+  <title>Монитор статусов</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- ✅ UMD версия — работает без import/module -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
   <style>
     :root {
-      --primary: #0066ff;
-      --primary-dark: #0055d4;
-      --bg: #f0f2f5;
-      --text-dark: #111;
-      --text-light: #555;
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c28;
+      --border: #2a2a3d;
+      --accent: #7c6af7;
+      --accent2: #4fc8a8;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --online: #4fc8a8;
+      --away: #f5a623;
+      --busy: #f45b5b;
+      --dnd: #6b6b80;
     }
-    * { margin:0; padding:0; box-sizing:border-box; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: 'DM Sans', sans-serif;
       background: var(--bg);
       min-height: 100vh;
-      padding: 16px;
-      color: var(--text-dark);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px;
+      color: var(--text);
     }
+
     .container {
       width: 100%;
-      max-width: 520px;
-      margin: 0 auto;
-      background: white;
+      max-width: 480px;
+    }
+
+    /* HEADER */
+    .header {
+      margin-bottom: 24px;
+    }
+
+    .header-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-family: 'Syne', sans-serif;
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .header h1 span {
+      color: var(--accent);
+    }
+
+    /* MY STATUS CARD */
+    .my-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
       overflow: hidden;
     }
-    header {
-      padding: 20px;
-      border-bottom: 1px solid #eee;
-      background: linear-gradient(135deg, #f8f9ff, #ffffff);
+
+    .my-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
     }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--text-dark);
-      margin-bottom: 4px;
+
+    .my-card-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
     }
-    .subtitle {
-      color: var(--text-light);
-      font-size: 0.9rem;
-    }
-    .status-section { padding: 20px; }
-    .my-info {
-      padding: 16px;
-      background: #f0f7ff;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      font-weight: 500;
-      border-left: 4px solid var(--primary);
-    }
-    .status-controls {
-      display: flex;
-      gap: 8px;
-      margin: 20px 0;
-      flex-wrap: wrap;
-    }
-    .status-btn {
-      flex: 1;
-      min-width: 120px;
-      padding: 12px 16px;
-      border-radius: 30px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .status-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .status-btn:active { transform: translateY(0); }
-    .group-list { margin-top: 24px; }
-    .group-title {
-      font-weight: 600;
-      color: var(--text-dark);
-      margin-bottom: 16px;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .group-title span {
-      background: var(--primary);
-      color: white;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-    }
-    #groupList .user-item {
+
+    .my-card-content {
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 14px;
+    }
+
+    .my-avatar {
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
-      background: #f8f9fa;
-      margin-bottom: 8px;
-      transition: 0.15s;
-      border: 1px solid transparent;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: white;
+      flex-shrink: 0;
     }
-    #groupList .user-item:hover {
-      background: #f0f7ff;
-      border-color: var(--primary);
+
+    .my-details { flex: 1; }
+
+    .my-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text);
     }
-    #groupList .user-item.current-user {
-      background: #e8f4ff;
-      border-color: #90c8ff;
+
+    .my-status {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .status-dot {
-      width: 14px;
-      height: 14px;
+
+    .status-dot-sm {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       flex-shrink: 0;
-      box-shadow: 0 0 0 2px white;
     }
-    .user-info { flex-grow: 1; }
-    .user-name { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
-    .user-status { font-size: 0.85rem; color: #666; }
-    .user-email { font-size: 0.75rem; color: #999; margin-top: 2px; }
-    .stats {
-      margin-top: 20px;
-      padding: 16px;
-      background: #f8f9fa;
+
+    /* STATUS BUTTONS */
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .status-btn {
+      padding: 12px 16px;
       border-radius: 12px;
-      display: flex;
-      justify-content: space-around;
-      text-align: center;
-    }
-    .stat-item { flex: 1; }
-    .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-    .stat-label { font-size: 0.8rem; color: #666; }
-    .footer {
-      padding: 16px;
-      text-align: center;
-      border-top: 1px solid #eee;
-      color: #999;
-      font-size: 0.85rem;
-    }
-    .loading { text-align: center; padding: 40px; color: #666; }
-    .error-message {
-      background: #ffebee;
-      color: #c62828;
-      padding: 12px;
-      border-radius: 8px;
-      margin: 16px 0;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
       font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .status-btn:hover {
+      border-color: var(--accent);
+      background: var(--surface2);
+      transform: translateY(-1px);
+    }
+
+    .status-btn:active { transform: translateY(0); }
+
+    .status-btn .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-btn.active {
+      border-color: var(--accent);
+      background: rgba(124, 106, 247, 0.1);
+    }
+
+    /* STATS BAR */
+    .stats-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 0;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      flex: 1;
+      text-align: center;
+      position: relative;
+    }
+
+    .stat + .stat::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 10%; bottom: 10%;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .stat-num.green { color: var(--online); }
+    .stat-num.yellow { color: var(--away); }
+    .stat-num.red { color: var(--busy); }
+
+    .stat-lbl {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+
+    /* MEMBERS LIST */
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-title .count-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .user-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.15s;
+    }
+
+    .user-item:hover {
+      border-color: var(--border);
+      background: var(--surface2);
+    }
+
+    .user-item.is-me {
+      border-color: rgba(124, 106, 247, 0.4);
+      background: rgba(124, 106, 247, 0.05);
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--muted);
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .avatar-badge {
+      position: absolute;
+      bottom: -3px; right: -3px;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--surface);
+    }
+
+    .user-meta { flex: 1; min-width: 0; }
+
+    .user-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-name .you-tag {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: var(--accent);
+      background: rgba(124, 106, 247, 0.15);
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+
+    .user-status-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .status-indicator {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* EMPTY / LOADING */
+    .state-msg {
+      text-align: center;
+      padding: 32px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.75rem;
+      margin-top: 20px;
+      padding-bottom: 8px;
+    }
+
+    .live-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: var(--accent2);
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: pulse 2s infinite;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <header>
-    <h1>👥 Монитор статусов</h1>
-    <div class="subtitle">Отслеживание активности участников</div>
-  </header>
-  
-  <div class="status-section">
-    <div id="myInfo" class="my-info">Загрузка информации о пользователе...</div>
-    
-    <div class="status-controls">
-      <!-- ✅ ИСПРАВЛЕНО: оба аргумента передаются в функцию -->
-      <button class="status-btn" style="background: #4CAF50;"
-        onclick="window.changeStatus('В сети', '#4CAF50')">🟢 В сети</button>
-      <button class="status-btn" style="background: #FF9800;"
-        onclick="window.changeStatus('Отошёл', '#FF9800')">🟡 Отошёл</button>
-      <button class="status-btn" style="background: #f44336;"
-        onclick="window.changeStatus('Занят', '#f44336')">🔴 Занят</button>
-      <button class="status-btn" style="background: #9e9e9e;"
-        onclick="window.changeStatus('Не беспокоить', '#9e9e9e')">⚫ Не беспокоить</button>
-    </div>
-    
-    <div class="group-list">
-      <div class="group-title">
-        Участники группы
-        <span id="membersCount">0</span>
-      </div>
-      <div id="groupList">
-        <div class="loading">Загрузка участников...</div>
-      </div>
-    </div>
-    
-    <div class="stats">
-      <div class="stat-item">
-        <div class="stat-value" id="onlineCount">0</div>
-        <div class="stat-label">онлайн</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value" id="awayCount">0</div>
-        <div class="stat-label">отошли</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value" id="busyCount">0</div>
-        <div class="stat-label">заняты</div>
+
+  <div class="header">
+    <div class="header-label">Realtime Monitor</div>
+    <h1>Статусы <span>группы</span></h1>
+  </div>
+
+  <!-- МОЯ КАРТОЧКА -->
+  <div class="my-card">
+    <div class="my-card-label">Ваш профиль</div>
+    <div class="my-card-content">
+      <div class="my-avatar" id="myAvatar">?</div>
+      <div class="my-details">
+        <div class="my-name" id="myName">Загрузка...</div>
+        <div class="my-status">
+          <div class="status-dot-sm" id="myDot" style="background: var(--muted)"></div>
+          <span id="myStatusText">—</span>
+        </div>
       </div>
     </div>
   </div>
-  
+
+  <!-- КНОПКИ СТАТУСА -->
+  <div class="status-grid">
+    <button class="status-btn" id="btn-online" onclick="changeStatus('В сети', '#4fc8a8')">
+      <div class="dot" style="background:#4fc8a8"></div> В сети
+    </button>
+    <button class="status-btn" id="btn-away" onclick="changeStatus('Отошёл', '#f5a623')">
+      <div class="dot" style="background:#f5a623"></div> Отошёл
+    </button>
+    <button class="status-btn" id="btn-busy" onclick="changeStatus('Занят', '#f45b5b')">
+      <div class="dot" style="background:#f45b5b"></div> Занят
+    </button>
+    <button class="status-btn" id="btn-dnd" onclick="changeStatus('Не беспокоить', '#6b6b80')">
+      <div class="dot" style="background:#6b6b80"></div> Не беспокоить
+    </button>
+  </div>
+
+  <!-- СТАТИСТИКА -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num green" id="cnt-online">0</div>
+      <div class="stat-lbl">онлайн</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num yellow" id="cnt-away">0</div>
+      <div class="stat-lbl">отошли</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num red" id="cnt-busy">0</div>
+      <div class="stat-lbl">заняты</div>
+    </div>
+  </div>
+
+  <!-- СПИСОК -->
+  <div class="section-title">
+    Участники <span class="count-badge" id="total-count">0</span>
+  </div>
+  <div class="user-list" id="userList">
+    <div class="state-msg pulse">Подключение...</div>
+  </div>
+
   <div class="footer">
-    Обновление каждые 3 секунды • Supabase Realtime
+    <span class="live-dot"></span>Обновление в реальном времени · Supabase Realtime
   </div>
+
 </div>
 
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/module/index.js';
+<script>
+  // ✅ UMD — supabase доступен как глобальный объект window.supabase
+  const { createClient } = window.supabase;
 
-const SUPABASE_URL = 'https://amcacekhqgycrnqzgtch.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_2pt4bLheDvE-TU-9m129UQ_YyY0YxER';
-const MY_ID = 'a8e2f841-4c1c-4f85-9b37-f7876c21a395';
+  const SUPABASE_URL = 'https://amcacekhqgycrnqzgtch.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_2pt4bLheDvE-TU-9m129UQ_YyY0YxER';
+  const MY_ID = 'a8e2f841-4c1c-4f85-9b37-f7876c21a395';
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const myInfoEl = document.getElementById('myInfo');
-const groupListEl = document.getElementById('groupList');
-const membersCountEl = document.getElementById('membersCount');
-const onlineCountEl = document.getElementById('onlineCount');
-const awayCountEl = document.getElementById('awayCount');
-const busyCountEl = document.getElementById('busyCount');
+  // Цвета и эмодзи по статусу
+  const STATUS_MAP = {
+    'В сети':        { color: '#4fc8a8', emoji: '🟢', btn: 'btn-online' },
+    'Отошёл':        { color: '#f5a623', emoji: '🟡', btn: 'btn-away' },
+    'Занят':         { color: '#f45b5b', emoji: '🔴', btn: 'btn-busy' },
+    'Не беспокоить': { color: '#6b6b80', emoji: '⚫', btn: 'btn-dnd' },
+  };
 
-// ✅ ИСПРАВЛЕНО: функция принимает оба параметра (text И color)
-window.changeStatus = async (text, color) => {
-  try {
-    const { error } = await supabase
+  // ── Изменить статус ──────────────────────────────
+  window.changeStatus = async (text, color) => {
+    // Визуальный отклик — подсветить активную кнопку
+    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+    const map = STATUS_MAP[text];
+    if (map) document.getElementById(map.btn)?.classList.add('active');
+
+    const { error } = await db
       .from('profiles')
-      .update({ 
-        status: text, 
-        color: color,
-        updated_at: new Date().toISOString()
-      })
+      .update({ status: text, color, updated_at: new Date().toISOString() })
       .eq('id', MY_ID);
 
     if (error) {
-      alert("Ошибка при обновлении статуса: " + error.message);
-      console.error('Supabase error:', error);
+      console.error('Update error:', error);
+      alert('Ошибка обновления статуса: ' + error.message);
     }
-  } catch (err) {
-    console.error('Error:', err);
-    alert('Произошла ошибка при изменении статуса');
-  }
-};
+  };
 
-function updateStats(users) {
-  if (!users || users.length === 0) return;
-  membersCountEl.textContent = users.length;
-  const online = users.filter(u => u.status === 'В сети').length;
-  const away = users.filter(u => u.status === 'Отошёл').length;
-  const busy = users.filter(u => u.status === 'Занят' || u.status === 'Не беспокоить').length;
-  onlineCountEl.textContent = online;
-  awayCountEl.textContent = away;
-  busyCountEl.textContent = busy;
-}
-
-function displayUsers(users) {
-  if (!users || users.length === 0) {
-    groupListEl.innerHTML = '<div class="loading">Нет участников</div>';
-    return;
+  function getInitial(name) {
+    return (name || '?').charAt(0).toUpperCase();
   }
-  
-  const sortedUsers = [...users].sort((a, b) => {
-    if (a.status === 'В сети' && b.status !== 'В сети') return -1;
-    if (a.status !== 'В сети' && b.status === 'В сети') return 1;
-    return (a.username || '').localeCompare(b.username || '');
-  });
-  
-  groupListEl.innerHTML = sortedUsers.map(user => {
-    let statusEmoji = '⚪';
-    if (user.status === 'В сети') statusEmoji = '🟢';
-    else if (user.status === 'Отошёл') statusEmoji = '🟡';
-    else if (user.status === 'Занят') statusEmoji = '🔴';
-    else if (user.status === 'Не беспокоить') statusEmoji = '⚫';
-    
-    return `
-      <div class="user-item ${user.id === MY_ID ? 'current-user' : ''}">
-        <div class="status-dot" style="background: ${user.color || '#ccc'}"></div>
-        <div class="user-info">
-          <div class="user-name">
-            ${user.username || 'Без имени'}
-            ${user.id === MY_ID ? ' (вы)' : ''}
+
+  function updateMyCard(user) {
+    if (!user) return;
+    document.getElementById('myAvatar').textContent = getInitial(user.username);
+    document.getElementById('myName').textContent = user.username || 'Без имени';
+    document.getElementById('myStatusText').textContent = user.status || '—';
+    document.getElementById('myDot').style.background = user.color || '#6b6b80';
+
+    // Подсветить кнопку
+    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+    const map = STATUS_MAP[user.status];
+    if (map) document.getElementById(map.btn)?.classList.add('active');
+  }
+
+  function renderUsers(users) {
+    const list = document.getElementById('userList');
+
+    if (!users?.length) {
+      list.innerHTML = '<div class="state-msg">Нет участников</div>';
+      return;
+    }
+
+    // Сортировка: сначала онлайн, потом по имени
+    const sorted = [...users].sort((a, b) => {
+      const aOnline = a.status === 'В сети' ? 0 : 1;
+      const bOnline = b.status === 'В сети' ? 0 : 1;
+      if (aOnline !== bOnline) return aOnline - bOnline;
+      return (a.username || '').localeCompare(b.username || '');
+    });
+
+    list.innerHTML = sorted.map(u => {
+      const map = STATUS_MAP[u.status] || { color: '#6b6b80', emoji: '⚪' };
+      const isMe = u.id === MY_ID;
+      return `
+        <div class="user-item ${isMe ? 'is-me' : ''}">
+          <div class="avatar">
+            ${getInitial(u.username)}
+            <div class="avatar-badge" style="background:${map.color}"></div>
           </div>
-          <div class="user-status">${statusEmoji} ${user.status || 'Статус не задан'}</div>
-          ${user.email ? `<div class="user-email">${user.email}</div>` : ''}
+          <div class="user-meta">
+            <div class="user-name">
+              ${u.username || 'Без имени'}
+              ${isMe ? '<span class="you-tag">вы</span>' : ''}
+            </div>
+            <div class="user-status-text">${map.emoji} ${u.status || 'Нет статуса'}</div>
+          </div>
+          <div class="status-indicator">${map.emoji}</div>
         </div>
-      </div>
-    `;
-  }).join('');
-  
-  const currentUser = users.find(u => u.id === MY_ID);
-  if (currentUser) {
-    myInfoEl.innerHTML = `
-      <strong>${currentUser.username || 'Пользователь'}</strong><br>
-      Ваш статус: ${currentUser.status || 'не задан'}
-      ${currentUser.email ? `<br><small>${currentUser.email}</small>` : ''}
-    `;
-  }
-  
-  updateStats(users);
-}
+      `;
+    }).join('');
 
-async function loadData() {
-  try {
-    const { data, error } = await supabase
+    // Статистика
+    const total = users.length;
+    const online = users.filter(u => u.status === 'В сети').length;
+    const away = users.filter(u => u.status === 'Отошёл').length;
+    const busy = users.filter(u => u.status === 'Занят' || u.status === 'Не беспокоить').length;
+
+    document.getElementById('total-count').textContent = total;
+    document.getElementById('cnt-online').textContent = online;
+    document.getElementById('cnt-away').textContent = away;
+    document.getElementById('cnt-busy').textContent = busy;
+
+    updateMyCard(users.find(u => u.id === MY_ID));
+  }
+
+  async function loadData() {
+    const { data, error } = await db
       .from('profiles')
       .select('*')
       .order('username', { ascending: true });
 
     if (error) {
-      console.error('Error loading profiles:', error);
-      groupListEl.innerHTML = `<div class="error-message">Ошибка загрузки: ${error.message}</div>`;
+      console.error('Load error:', error);
+      document.getElementById('userList').innerHTML =
+        `<div class="state-msg" style="color:#f45b5b">Ошибка: ${error.message}</div>`;
       return;
     }
 
-    displayUsers(data || []);
-  } catch (err) {
-    console.error('Unexpected error:', err);
-    groupListEl.innerHTML = '<div class="error-message">Непредвиденная ошибка</div>';
+    renderUsers(data || []);
   }
-}
 
-function setupRealtimeSubscription() {
-  return supabase
-    .channel('profiles_changes')
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'profiles' },
-      (payload) => {
-        console.log('Change received!', payload);
-        loadData();
-      }
-    )
-    .subscribe();
-}
+  function subscribe() {
+    db.channel('profiles_realtime')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles' },
+        () => loadData()
+      )
+      .subscribe();
+  }
 
-async function init() {
-  console.log('Connecting to Supabase...');
-  await loadData();
-  setupRealtimeSubscription();
-  setInterval(loadData, 3000);
-  
-  // ✅ ИСПРАВЛЕНО: используем maybeSingle() вместо single() — не выбрасывает ошибку если нет записи
-  const { data: userExists } = await supabase
-    .from('profiles')
-    .select('id')
-    .eq('id', MY_ID)
-    .maybeSingle();
-    
-  if (!userExists) {
-    console.log('Создаём профиль пользователя...');
-    await supabase
-      .from('profiles')
-      .insert({
-        id: MY_ID,
-        username: 'Администратор',
-        email: 'admin@example.com',
-        status: 'В сети',
-        color: '#4CAF50'
-      });
+  async function init() {
     await loadData();
+    subscribe();
+    // Запасной поллинг каждые 5 секунд
+    setInterval(loadData, 5000);
   }
-}
 
-init().catch(console.error);
+  init().catch(console.error);
 </script>
 </body>
 </html>
