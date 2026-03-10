@@ -227,6 +227,7 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+// Конфигурация Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyA7XlW_nh-IVyKWbEQMiLxm0TzIilOYhwo",
   authDomain: "myproject-aabca.firebaseapp.com",
@@ -237,6 +238,7 @@ const firebaseConfig = {
   measurementId: "G-S6ZRRY7MQF"
 };
 
+// Инициализация Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -265,18 +267,21 @@ let currentChatUser = null;
 let currentChatId   = null;
 let unsubscribeMsg  = null;
 
-// Авторизация
+// Обработчики авторизации
 loginBtn.onclick  = () => signInWithPopup(auth, provider);
 logoutBtn.onclick = () => signOut(auth);
 
+// Отслеживание состояния аутентификации
 onAuthStateChanged(auth, async (user) => {
   if (user) {
+    // Пользователь вошел
     loginBtn.style.display = 'none';
     userPanel.style.display = 'block';
     userNameEl.textContent = user.displayName || 'Пользователь';
     userEmailEl.textContent = user.email;
     userPhoto.src = user.photoURL || 'https://via.placeholder.com/48?text=You';
 
+    // Сохраняем информацию о пользователе в Firestore
     await setDoc(doc(db, 'users', user.uid), {
       uid: user.uid,
       name: user.displayName,
@@ -285,17 +290,25 @@ onAuthStateChanged(auth, async (user) => {
       lastActive: serverTimestamp()
     }, { merge: true });
 
+    // Показываем список пользователей и загружаем его
     usersList.style.display = 'block';
     loadUsers();
   } else {
+    // Пользователь вышел
     loginBtn.style.display = 'block';
     userPanel.style.display = 'none';
     usersList.style.display = 'none';
     chatCont.style.display  = 'none';
+    
+    // Отписываемся от сообщений, если чат был открыт
+    if (unsubscribeMsg) {
+      unsubscribeMsg();
+      unsubscribeMsg = null;
+    }
   }
 });
 
-// Загрузка списка пользователей
+// Загрузка списка пользователей (кроме текущего)
 function loadUsers() {
   onSnapshot(collection(db, 'users'), (snap) => {
     usersCont.innerHTML = '';
@@ -318,12 +331,13 @@ function loadUsers() {
   });
 }
 
-// Открытие чата
+// Открытие чата с выбранным пользователем
 async function openChat(user) {
   currentChatUser = user;
   const uids = [auth.currentUser.uid, user.uid].sort();
   currentChatId = uids.join('_');
 
+  // Создаем или обновляем документ чата
   const chatRef = doc(db, 'chats', currentChatId);
   await setDoc(chatRef, {
     participants: uids,
@@ -331,16 +345,18 @@ async function openChat(user) {
     updatedAt: serverTimestamp()
   }, { merge: true });
 
+  // Обновляем UI
   chatAvatar.src = user.photo || 'https://via.placeholder.com/48';
   chatWith.textContent = user.name || 'Пользователь';
 
   usersList.style.display = 'none';
   chatCont.style.display = 'block';
 
+  // Загружаем сообщения
   loadMessages();
 }
 
-// Закрытие чата
+// Закрытие чата и возврат к списку пользователей
 function closeChat() {
   if (unsubscribeMsg) {
     unsubscribeMsg();
@@ -353,7 +369,7 @@ function closeChat() {
   messagesDiv.innerHTML = '';
 }
 
-// Загрузка сообщений
+// Загрузка сообщений в реальном времени
 function loadMessages() {
   if (unsubscribeMsg) unsubscribeMsg();
 
@@ -368,14 +384,20 @@ function loadMessages() {
 
       const div = document.createElement('div');
       div.className = `message ${isYou ? 'you' : 'them'}`;
+      
+      // Форматируем время
+      let timeStr = '...';
+      if (m.timestamp && m.timestamp.toDate) {
+        timeStr = new Date(m.timestamp.toDate()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      }
+      
       div.innerHTML = `
         ${m.text}
-        <span class="time">
-          ${m.timestamp ? new Date(m.timestamp.toDate()).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '...'}
-        </span>
+        <span class="time">${timeStr}</span>
       `;
       messagesDiv.appendChild(div);
     });
+    // Прокручиваем вниз
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   });
 }
@@ -387,22 +409,26 @@ async function sendMessage() {
 
   const colRef = collection(db, 'chats', currentChatId, 'messages');
 
+  // Добавляем сообщение
   await addDoc(colRef, {
     fromUid: auth.currentUser.uid,
     text,
     timestamp: serverTimestamp()
   });
 
+  // Обновляем информацию о последнем сообщении в чате
   await setDoc(doc(db, 'chats', currentChatId), {
     lastMessage: text.substring(0, 80),
     lastMessageTime: serverTimestamp(),
     lastFrom: auth.currentUser.uid
   }, { merge: true });
 
+  // Очищаем поле ввода
   msgInput.value = '';
   msgInput.focus();
 }
 
+// Обработчики отправки сообщений
 sendBtn.onclick = sendMessage;
 
 msgInput.addEventListener('keydown', e => {
@@ -412,12 +438,8 @@ msgInput.addEventListener('keydown', e => {
   }
 });
 
-// Кнопка «Назад» — явная привязка события
-if (backBtn) {
-  backBtn.addEventListener('click', closeChat);
-} else {
-  console.warn('Кнопка #backBtn не найдена');
-}
+// Обработчик кнопки "Назад"
+backBtn.addEventListener('click', closeChat);
 
 </script>
 </body>
