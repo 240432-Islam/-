@@ -6,7 +6,6 @@
   <title>Монитор статусов</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
   <style>
     :root {
       --bg: #0a0a0f;
@@ -43,12 +42,7 @@
       font-family: 'Syne', sans-serif;
       margin-bottom: 8px;
     }
-    .header h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: 2rem;
-      font-weight: 800;
-      color: var(--text);
-    }
+    .header h1 { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; }
     .header h1 span { color: var(--accent); }
 
     /* LOGIN */
@@ -69,18 +63,8 @@
       background: linear-gradient(90deg, var(--accent), var(--accent2));
     }
     .login-icon { font-size: 3rem; margin-bottom: 16px; }
-    .login-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .login-sub {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 32px;
-      line-height: 1.5;
-    }
+    .login-title { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+    .login-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 32px; line-height: 1.5; }
     .google-btn {
       display: flex;
       align-items: center;
@@ -145,15 +129,9 @@
       width: 44px; height: 44px;
       border-radius: 12px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: white;
-      flex-shrink: 0;
-      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem;
+      color: white; flex-shrink: 0; overflow: hidden;
     }
     .my-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .my-name { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 1rem; }
@@ -168,13 +146,10 @@
       background: var(--surface);
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 500;
+      font-size: 0.9rem; font-weight: 500;
       cursor: pointer;
       transition: all 0.18s ease;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: flex; align-items: center; gap: 10px;
     }
     .status-btn:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-1px); }
     .status-btn:active { transform: translateY(0); }
@@ -182,12 +157,9 @@
     .status-btn.active { border-color: var(--accent); background: rgba(124,106,247,0.1); }
 
     .stats-bar {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 20px;
-      display: flex;
-      margin-bottom: 20px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 20px;
+      display: flex; margin-bottom: 20px;
     }
     .stat { flex: 1; text-align: center; position: relative; }
     .stat + .stat::before { content: ''; position: absolute; left: 0; top: 10%; bottom: 10%; width: 1px; background: var(--border); }
@@ -198,51 +170,33 @@
     .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
 
     .section-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 0.85rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
       margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
     }
     .count-badge { background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 0.75rem; padding: 2px 8px; border-radius: 20px; }
     .user-list { display: flex; flex-direction: column; gap: 6px; }
     .user-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      transition: all 0.15s;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 14px; transition: all 0.15s;
     }
     .user-item:hover { background: var(--surface2); }
     .user-item.is-me { border-color: rgba(124,106,247,0.4); background: rgba(124,106,247,0.05); }
     .avatar {
-      width: 38px; height: 38px;
-      border-radius: 10px;
+      width: 38px; height: 38px; border-radius: 10px;
       background: var(--surface2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      color: var(--muted);
-      flex-shrink: 0;
-      position: relative;
-      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem;
+      color: var(--muted); flex-shrink: 0; position: relative; overflow: hidden;
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
     .avatar-badge { position: absolute; bottom: -3px; right: -3px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--surface); }
     .user-meta { flex: 1; min-width: 0; }
     .user-name { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .you-tag { font-family: 'DM Sans', sans-serif; font-size: 0.7rem; font-weight: 400; color: var(--accent); background: rgba(124,106,247,0.15); padding: 1px 6px; border-radius: 4px; margin-left: 6px; }
+    .you-tag { font-family: 'DM Sans', sans-serif; font-size: 0.7rem; color: var(--accent); background: rgba(124,106,247,0.15); padding: 1px 6px; border-radius: 4px; margin-left: 6px; }
     .user-status-text { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
     .status-indicator { width: 32px; height: 32px; border-radius: 8px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
     .state-msg { text-align: center; padding: 32px; color: var(--muted); font-size: 0.9rem; }
@@ -338,12 +292,11 @@
   </div>
 
 </div>
-
 <script>
   const { createClient } = window.supabase;
 
-  const SUPABASE_URL = 'https://amcacekhqgycrnqzgtch.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_2pt4bLheDvE-TU-9m129UQ_YyY0YxER';
+  const SUPABASE_URL  = 'https://amcacekhqgycrnqzgtch.supabase.co';
+  const SUPABASE_KEY  = 'sb_publishable_2pt4bLheDvE-TU-9m129UQ_YyY0YxER';
 
   const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -356,22 +309,27 @@
 
   let currentUserId = null;
 
+  // ── Вход через Google ────────────────────────────
   window.loginWithGoogle = async () => {
     const { error } = await db.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.href }
+      options: { redirectTo: 'https://240432-islam.github.io/' }
     });
     if (error) alert('Ошибка входа: ' + error.message);
   };
 
+  // ── Выход ────────────────────────────────────────
   window.logout = async () => {
     if (currentUserId) {
       await db.from('profiles').update({ status: 'Не беспокоить' }).eq('id', currentUserId);
     }
     await db.auth.signOut();
-    location.reload();
+    currentUserId = null;
+    document.getElementById('appScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'block';
   };
 
+  // ── Изменить статус ──────────────────────────────
   window.changeStatus = async (text) => {
     if (!currentUserId) return;
     document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
@@ -442,26 +400,58 @@
       .subscribe();
   }
 
-  async function startApp(userId) {
-    currentUserId = userId;
+  // ── Запуск приложения после входа ───────────────
+  async function startApp(session) {
+    currentUserId = session.user.id;
+
+    // Создаём или обновляем профиль
+    const name = session.user.user_metadata?.full_name
+               || session.user.user_metadata?.name
+               || session.user.email?.split('@')[0]
+               || 'Пользователь';
+
+    const avatar = session.user.user_metadata?.avatar_url || null;
+
+    // Проверяем есть ли уже профиль
+    const { data: existing } = await db
+      .from('profiles')
+      .select('id')
+      .eq('id', currentUserId)
+      .maybeSingle();
+
+    if (existing) {
+      // Обновляем статус на "В сети"
+      await db.from('profiles')
+        .update({ status: 'В сети', username: name })
+        .eq('id', currentUserId);
+    } else {
+      // Создаём новый профиль
+      await db.from('profiles').insert({
+        id: currentUserId,
+        username: name,
+        status: 'В сети'
+      });
+    }
+
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appScreen').style.display = 'block';
-    await db.from('profiles').update({ status: 'В сети' }).eq('id', currentUserId);
+
     await loadData();
     subscribe();
     setInterval(loadData, 5000);
   }
 
+  // ── Инициализация ────────────────────────────────
   async function init() {
     const { data: { session } } = await db.auth.getSession();
     if (session) {
-      await startApp(session.user.id);
+      await startApp(session);
     }
   }
 
   db.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' && session && !currentUserId) {
-      await startApp(session.user.id);
+      await startApp(session);
     }
   });
 
